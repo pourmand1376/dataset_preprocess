@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from multiprocessing import Pool
 from os import makedirs, path, sep, walk
+from pathlib import Path
 
 import cv2
 import imageio
@@ -63,7 +64,15 @@ def _correct_image_color_space(dcm) -> np.ndarray:
     return y
 
 
-def check_file(dcm_path, dcm_pref, save_dir):
+def generate_image_file(dcm_file: Path, save_file: Path):
+    dcm = pydicom.read_file(dcm_file)
+    # if this is AXIAL
+
+    img = _correct_image_color_space(dcm)
+    imageio.imwrite(save_file, cv2.resize(img, (512, 512)).astype(np.uint16))
+
+
+def _check_file(dcm_path, dcm_pref, save_dir):
 
     try:
         dcm = pydicom.read_file(dcm_path)
@@ -102,7 +111,7 @@ if __name__ == "__main__":
     print(f"Found {len(dcm_paths)} dcm files.")
 
     pool = Pool(args.cores)
-    cnts = pool.starmap(check_file, [(x, args.pref, args.save_dir) for x in dcm_paths])
+    cnts = pool.starmap(_check_file, [(x, args.pref, args.save_dir) for x in dcm_paths])
     pool.close()
 
     print(f"Found {sum(cnts)} spots.")
