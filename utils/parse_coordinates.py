@@ -12,6 +12,8 @@ from pathlib import Path
 
 from xmltodict import parse
 
+from logger import logger
+
 
 def _read_annotations(sample: dict):
 
@@ -36,6 +38,7 @@ def _read_annotations(sample: dict):
 
 
 def read_xml_annotations(read_file: Path, json_output: bool = True):
+    logger.info(f"About to read {read_file}")
     text = read_file.read_text()
     parsed_data = parse(text)
     series = parsed_data["studies"]["study"]["series"]
@@ -61,6 +64,7 @@ def read_xml_annotations(read_file: Path, json_output: bool = True):
     json_file = read_file.parent / "annotations.json"
     if json_output:
         Path(json_file).write_text(json.dumps(annotations))
+        logger.info(f"Just wrote {json_file}")
 
     return annotations
 

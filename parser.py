@@ -9,7 +9,9 @@ from pathlib import Path
 
 from pydicom.filereader import dcmread
 
-from utils import generate_dcm_image, parse_coordinates
+from logger import logger
+from utils import (generate_annotated_image, generate_dcm_image,
+                   parse_coordinates)
 
 
 def is_full_sample(folder: Path) -> bool:
@@ -40,13 +42,10 @@ def find_all_numbers_folder(folder: Path):
     for item in folder.iterdir():
         match = re.match(r"^\d+$", item.name)
         if match:
+            logger.info(f"found folder {folder/match[0]}")
             return folder / match[0]
 
     return None
-
-
-def process_dcm_file(dcm_file: Path):
-    pass
 
 
 def find_dcm_files(folder: Path) -> list[Path]:
@@ -73,11 +72,13 @@ def process_full_sample(folder: Path):
     """
     This function gets a verified full sample and processes it!
     """
+    logger.info(f"About to Process Folder {folder}")
     xml_annotation = folder / "CDViewer" / "studies.xml"
     if not xml_annotation.exists():
         raise ValueError("studies.xml file not found!")
 
     annotations = parse_coordinates.read_xml_annotations(xml_annotation, True)
+    logger.info("annotations are parsed to json")
     dcm_files = find_dcm_files(folder)
 
     if len(dcm_files) == 0:
@@ -88,14 +89,18 @@ def process_full_sample(folder: Path):
     for file in dcm_files:
         generate_dcm_image.generate_image_file(file, png_dir / f"{file.name}.png")
 
+    generate_annotated_image.process_needed_files(png_dir, annotations)
+
 
 def main(args):
     input_path = Path(args.folder)
     if is_full_sample(input_path):
+        logger.info("Processing Just One sample")
         process_full_sample(input_path)
 
     # if it is not a full sample, it is a list of full samples!
     else:
+        logger.info("Processing Batch of samples")
         for file in input_path.iterdir():
             if file.is_dir():
                 if is_full_sample(file):
