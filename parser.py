@@ -6,6 +6,8 @@ It gets a patient full sample or a directory containing full samples and convert
 from argparse import ArgumentParser
 from pathlib import Path
 
+from utils import parse_coordinates
+
 
 def is_full_sample(folder: Path) -> bool:
     """
@@ -33,7 +35,7 @@ def process_full_sample(folder: Path):
     if not xml_annotation.exists():
         return ValueError("studies.xml file not found!")
 
-    xml_annotation.read_text()
+    annotations = parse_coordinates.read_xml_annotations(xml_annotation, True)
 
 
 def main(args):

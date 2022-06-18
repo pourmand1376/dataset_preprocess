@@ -13,7 +13,7 @@ from pathlib import Path
 from xmltodict import parse
 
 
-def read_annotations(sample: dict):
+def _read_annotations(sample: dict):
 
     if "annotation" not in sample.keys():
         return None
@@ -46,20 +46,23 @@ def read_xml_annotations(read_file: Path, json_output: bool = True):
         instance = item["instance"]
 
         if type(instance) is dict:
-            annotation = read_annotations(instance)
+            annotation = _read_annotations(instance)
             if annotation is None:
                 continue
             annotations.append(annotation)
 
         elif type(instance) is list:
             for sample in instance:
-                annotation = read_annotations(sample)
+                annotation = _read_annotations(sample)
                 if annotation is None:
                     continue
                 annotations.append(annotation)
+
     json_file = read_file.parent / "annotations.json"
     if json_output:
         Path(json_file).write_text(json.dumps(annotations))
+
+    return annotations
 
 
 def main(args):
