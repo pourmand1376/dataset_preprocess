@@ -31,7 +31,6 @@ def _correct_image_color_space(dcm) -> np.ndarray:
     ri = dcm.get("RescaleIntercept", None)
 
     # Transforming the values linearly
-
     if rs:
         img = img * rs
 
@@ -39,14 +38,10 @@ def _correct_image_color_space(dcm) -> np.ndarray:
         img = img + ri
 
     # Inverting the white-black images to black-white
-
     x = img.astype(np.float64)
-
     if (ww is not None) and (wc is not None):
-
         if pmi == "MONOCHROME1":
             ymin, ymax = 4095, 0
-
         else:
             ymin, ymax = 0, 4095
 
@@ -55,7 +50,6 @@ def _correct_image_color_space(dcm) -> np.ndarray:
         y = np.round((y * 1.0 / 4095 * 65535), 0).astype(np.uint16)
 
     else:
-
         if pmi == "MONOCHROME1":
             y = np.amax(x) - x
         else:

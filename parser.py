@@ -7,8 +7,6 @@ import re
 from argparse import ArgumentParser
 from pathlib import Path
 
-from pydicom.filereader import dcmread
-
 from logger import logger
 from utils import (generate_annotated_image, generate_dcm_image,
                    parse_coordinates)
