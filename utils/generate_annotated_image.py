@@ -1,5 +1,3 @@
-#!/home/amir/miniconda3/envs/venv-ctscan/bin/python
-
 """
 This file gets annotation and image folder  and draws annotation over images
 """
@@ -18,11 +16,48 @@ def process_needed_files(png_dir: Path, annotations):
         file_name, coordinates = file_annotation
         png_file = png_dir / (file_name.split("\\")[-1] + ".png")
         if png_file.exists():
-            generate_img(png_file, coordinates)
-            generate_img(png_file, coordinates, True)
+            _generate_img(png_file, coordinates)
+            _generate_img(png_file, coordinates, True)
 
 
-def generate_img(image_path: Path, coordinates, bbox: bool = False):
+def _generate_yolo(
+    image_path: Path,
+    min_x: int,
+    min_y: int,
+    max_x: int,
+    max_y: int,
+    image_height: int,
+    image_width: int,
+):
+    yolo_dir = image_path.parent.parent / "yolo"
+    if not yolo_dir.exists():
+        yolo_dir.mkdir(exist_ok=True)
+
+    import ipdb
+
+    ipdb.set_trace()
+
+    yolo_file = yolo_dir / image_path.name.replace(".png", ".txt")
+
+    b_center_x = (min_x + max_x) / 2
+    b_center_y = (min_y + max_y) / 2
+    b_width = max_x - min_x
+    b_height = max_y - min_y
+
+    # Normalise the co-ordinates by the dimensions of the image
+    b_center_x /= image_width
+    b_center_y /= image_height
+    b_width /= image_width
+    b_height /= image_height
+
+    # class label is always zero
+    yolo_file.write_text(
+        f"0 {b_center_x:.5f} {b_center_y:.5f} {b_width:.5f} {b_height:.5f}"
+    )
+    logger.info(f"write yolo {yolo_file}")
+
+
+def _generate_img(image_path: Path, coordinates, bbox: bool = False):
     image = cv2.imread(str(image_path))
 
     points = []

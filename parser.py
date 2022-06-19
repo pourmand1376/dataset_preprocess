@@ -85,7 +85,8 @@ def process_full_sample(folder: Path):
     png_dir = dcm_files[0].parent.parent / "png"
     png_dir.mkdir(exist_ok=True)
     for file in dcm_files:
-        generate_dcm_image.generate_image_file(file, png_dir / f"{file.name}.png")
+        png_file = png_dir / f"{file.name}.png"
+        generate_dcm_image.generate_image_file(file, png_file)
 
     generate_annotated_image.process_needed_files(png_dir, annotations)
 
