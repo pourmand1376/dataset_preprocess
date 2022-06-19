@@ -4,7 +4,6 @@ It gets a patient full sample or a directory containing full samples and convert
 """
 
 import re
-from argparse import ArgumentParser
 from pathlib import Path
 
 from logger import logger
