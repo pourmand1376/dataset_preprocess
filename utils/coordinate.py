@@ -7,15 +7,17 @@ You can refer here for more information:
 
 import json
 import re
-from argparse import ArgumentParser
 from pathlib import Path
 
+import typer
 from xmltodict import parse
 
 from logger import logger
 
+app = typer.Typer(name="Parse XML file", add_completion=False)
 
-def _read_annotations(sample: dict):
+
+def _parse_annotations(sample: dict):
 
     if "annotation" not in sample.keys():
         return None
@@ -49,14 +51,14 @@ def read_xml_annotations(read_file: Path, json_output: bool = True):
         instance = item["instance"]
 
         if type(instance) is dict:
-            annotation = _read_annotations(instance)
+            annotation = _parse_annotations(instance)
             if annotation is None:
                 continue
             annotations.append(annotation)
 
         elif type(instance) is list:
             for sample in instance:
-                annotation = _read_annotations(sample)
+                annotation = _parse_annotations(sample)
                 if annotation is None:
                     continue
                 annotations.append(annotation)
@@ -69,18 +71,9 @@ def read_xml_annotations(read_file: Path, json_output: bool = True):
     return annotations
 
 
-def main(args):
-    read_xml_annotations(Path(args.read_file), True)
+def main(xml_file: str):
+    read_xml_annotations(Path(xml_file), True)
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument(
-        "--file",
-        "-f",
-        dest="read_file",
-        required=True,
-    )
-    args = parser.parse_args()
-
-    main(args)
+    app()

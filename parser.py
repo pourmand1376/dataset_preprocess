@@ -1,19 +1,24 @@
 """
 This file is the entry point in out program.
-It gets a patient full sample or a directory containing full samples and converts them to yolo
+It gets a patient full sample or a directory containing full samples
+and converts them to yolo
 """
 
 import re
 from pathlib import Path
 
+import typer
+
 from logger import logger
-from utils import (generate_annotated_image, generate_dcm_image,
-                   parse_coordinates)
+from utils import annotate, coordinate, dicom_image
+
+app = typer.Typer(name="Parser DICOM", add_completion=False)
 
 
 def is_full_sample(folder: Path) -> bool:
     """
-    This gets a folder and understands if it is a full sample (a patient with all of its data)
+    This gets a folder and understands if it is a full sample
+    (a patient with all of its data)
     """
     if not folder.is_dir():
         raise ValueError("passed argument is not a valid folder")
@@ -74,7 +79,7 @@ def process_full_sample(folder: Path):
     if not xml_annotation.exists():
         raise ValueError("studies.xml file not found!")
 
-    annotations = parse_coordinates.read_xml_annotations(xml_annotation, True)
+    annotations = coordinate.read_xml_annotations(xml_annotation, True)
     logger.info("annotations are parsed to json")
     dcm_files = find_dcm_files(folder)
 
@@ -85,13 +90,31 @@ def process_full_sample(folder: Path):
     png_dir.mkdir(exist_ok=True)
     for file in dcm_files:
         png_file = png_dir / f"{file.name}.png"
-        generate_dcm_image.generate_image_file(file, png_file)
+        dicom_image.generate_image_file(file, png_file)
 
-    generate_annotated_image.process_needed_files(png_dir, annotations)
+    yolo_dir = annotate.process_needed_files(png_dir, annotations)
+
+    logger.info(f"PNG Dir {png_dir}")
+    logger.info(f"YOLO Dir {yolo_dir}")
+
+    return png_dir, yolo_dir
 
 
-def main(args):
-    input_path = Path(args.folder)
+def post_process_sample(png_dir: Path, yolo_dir: Path):
+    pass
+
+
+@app.command()
+def main(input_path: str):
+    """
+    There are two possible ways inputpath can be interpreted
+
+    First: It can be interpreted as a single (full) sample.
+
+    Second: It will be interpreted as a folder containing multiple samples
+    In this case, we will process each subfolder accordingly.
+    """
+    input_path = Path(input_path)
     if is_full_sample(input_path):
         logger.info("Processing Just One sample")
         process_full_sample(input_path)
@@ -106,8 +129,4 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument("-f", "--folder", required=True, dest="folder")
-    args = parser.parse_args()
-
-    main(args)
+    app()
