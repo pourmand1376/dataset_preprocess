@@ -10,11 +10,20 @@ import numpy as np
 
 from logger import logger
 
+from .utility import find_all_numbers_folder
+
 
 def process_needed_files(png_dir: Path, annotations):
+    yolo_dir = None
+
+    img_folder = find_all_numbers_folder(png_dir.parent)
+    parents_name = "_".join(str(img_folder).split("/")[-4:])
     for file_annotation in annotations:
-        file_name, coordinates = file_annotation
-        png_file = png_dir / (file_name.split("\\")[-1] + ".png")
+        extended_file_name, coordinates = file_annotation
+        file_name = extended_file_name.split("\\")[-1]
+        file_name = f"{parents_name}_{file_name}.png"
+
+        png_file = png_dir / file_name
         if png_file.exists():
             # uncomment below line if you want to see
             # png image with bbox on top of it
@@ -57,6 +66,7 @@ def _generate_yolo(
         f"0 {b_center_x:.7f} {b_center_y:.7f} {b_width:.7f} {b_height:.7f}"
     )
     logger.info(f"write yolo {yolo_file}")
+    return yolo_dir
 
 
 def _generate_img(image_path: Path, coordinates, bbox: bool = False):
@@ -81,7 +91,7 @@ def _generate_img(image_path: Path, coordinates, bbox: bool = False):
         min_x, max_x = x_values.min(), x_values.max()
         min_y, max_y = y_values.min(), y_values.max()
         image = cv2.rectangle(image, (min_x, min_y), (max_x, max_y), color, thickness)
-        _generate_yolo(
+        return _generate_yolo(
             image_path,
             min_x=min_x,
             min_y=min_y,
@@ -94,12 +104,12 @@ def _generate_img(image_path: Path, coordinates, bbox: bool = False):
         points = points.reshape((-1, 1, 2))
         image = cv2.polylines(image, [points], isClosed, color, thickness)
 
-    annotated_dir = image_path.parent.parent / ("bbox" if bbox else "annotated")
-    if not annotated_dir.exists():
-        annotated_dir.mkdir(exist_ok=True)
+        annotated_dir = image_path.parent.parent / "annotated"
+        if not annotated_dir.exists():
+            annotated_dir.mkdir(exist_ok=True)
 
-    annotated_path = annotated_dir / image_path.name
-    imageio.imwrite(annotated_path, image)
-    logger.info(f"saved annotated {annotated_path}")
+        annotated_path = annotated_dir / image_path.name
+        imageio.imwrite(annotated_path, image)
+        logger.info(f"saved annotated {annotated_path}")
 
-    return annotated_dir
+        return annotated_dir

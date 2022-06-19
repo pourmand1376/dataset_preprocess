@@ -11,6 +11,7 @@ import typer
 
 from logger import logger
 from utils import annotate, coordinate, dicom_image
+from utils.utility import find_all_numbers_folder
 
 app = typer.Typer(name="Parser DICOM", add_completion=False)
 
@@ -32,22 +33,6 @@ def is_full_sample(folder: Path) -> bool:
             return True
 
     return False
-
-
-def find_all_numbers_folder(folder: Path):
-    """
-    This functions enumerates a folder and return a subfolder
-    if the name of that subfolder consists of just numbers!
-    This is for because inside DICOM folder we have this structure
-    DICOM/20182124/13123/dcm_files
-    """
-    for item in folder.iterdir():
-        match = re.match(r"^\d+$", item.name)
-        if match:
-            logger.info(f"found folder {folder/match[0]}")
-            return folder / match[0]
-
-    return None
 
 
 def find_dcm_files(folder: Path) -> list[Path]:
@@ -89,7 +74,8 @@ def process_full_sample(folder: Path):
     png_dir = dcm_files[0].parent.parent / "png"
     png_dir.mkdir(exist_ok=True)
     for file in dcm_files:
-        png_file = png_dir / f"{file.name}.png"
+        file_name = "_".join(str(file).split("/")[-5:])
+        png_file = png_dir / f"{file_name}.png"
         dicom_image.generate_image_file(file, png_file)
 
     yolo_dir = annotate.process_needed_files(png_dir, annotations)
@@ -117,15 +103,16 @@ def main(input_path: str):
     input_path = Path(input_path)
     if is_full_sample(input_path):
         logger.info("Processing Just One sample")
-        process_full_sample(input_path)
-
+        png_dir, yolo_dir = process_full_sample(input_path)
+        post_process_sample(png_dir, yolo_dir)
     # if it is not a full sample, it is a list of full samples!
     else:
         logger.info("Processing Batch of samples")
         for file in input_path.iterdir():
             if file.is_dir():
                 if is_full_sample(file):
-                    process_full_sample(file)
+                    png_dir, yolo_dir = process_full_sample(file)
+                    post_process_sample(png_dir, yolo_dir)
 
 
 if __name__ == "__main__":
