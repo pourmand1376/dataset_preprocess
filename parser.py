@@ -11,7 +11,7 @@ import typer
 
 from logger import logger
 from utils import annotate, coordinate, dicom_image
-from utils.utility import find_all_numbers_folder
+from utils.utility import find_all_numbers_folder, move_folder
 
 app = typer.Typer(name="Parser DICOM", add_completion=False)
 
@@ -86,12 +86,32 @@ def process_full_sample(folder: Path):
     return png_dir, yolo_dir
 
 
-def post_process_sample(png_dir: Path, yolo_dir: Path):
-    pass
+def post_process_sample(png_dir: Path, yolo_dir: Path, output_folder: Path):
+    logger.info("Post Processing")
+    if not output_folder.exists():
+        logger.info(f"creating folder {output_folder}")
+        output_folder.mkdir(exist_ok=True)
+
+    logger.info(f"moving {png_dir} to {output_folder}")
+
+    images_dir = output_folder / "images"
+    if not images_dir.exists():
+        images_dir.mkdir(exist_ok=True)
+
+    move_folder(png_dir, images_dir)
+    png_dir.rmdir()
+
+    logger.info(f"moving {yolo_dir} to {output_folder}")
+
+    labels_dir = output_folder / "labels"
+    if not labels_dir.exists():
+        labels_dir.mkdir(exist_ok=True)
+    move_folder(yolo_dir, output_folder / "labels")
+    yolo_dir.rmdir()
 
 
 @app.command()
-def main(input_path: str):
+def main(input_path: str, output_folder: str = None):
     """
     There are two possible ways inputpath can be interpreted
 
@@ -101,10 +121,14 @@ def main(input_path: str):
     In this case, we will process each subfolder accordingly.
     """
     input_path = Path(input_path)
+    if output_folder:
+        output_folder = Path(output_folder)
+
     if is_full_sample(input_path):
         logger.info("Processing Just One sample")
         png_dir, yolo_dir = process_full_sample(input_path)
-        post_process_sample(png_dir, yolo_dir)
+        if output_folder:
+            post_process_sample(png_dir, yolo_dir, output_folder)
     # if it is not a full sample, it is a list of full samples!
     else:
         logger.info("Processing Batch of samples")
@@ -112,7 +136,8 @@ def main(input_path: str):
             if file.is_dir():
                 if is_full_sample(file):
                     png_dir, yolo_dir = process_full_sample(file)
-                    post_process_sample(png_dir, yolo_dir)
+                    if output_folder:
+                        post_process_sample(png_dir, yolo_dir, output_folder)
 
 
 if __name__ == "__main__":
