@@ -8,6 +8,7 @@ import imageio
 import numpy as np
 import pandas as pd
 import pydicom
+from pydicom.multival import MultiValue
 
 from logger import logger
 
@@ -22,13 +23,25 @@ def _correct_image_color_space(dcm) -> np.ndarray:
         np.ndarray: The corrected image in np.uint16
     """
 
+    def _get_lut_value(dicom_file, property):
+        """
+        https://github.com/pydicom/pydicom/issues/892
+        If this function doesn't get called
+        we would have problem with MultiValue and float
+        """
+        value = dicom_file.get(property, None)
+        if type(value) is MultiValue:
+            value = value[0]
+
+        return value
+
     img = dcm.pixel_array.astype(np.int64)
 
-    pmi = dcm.get("PhotometricInterpretation", None)
-    wc = dcm.get("WindowCenter", None)
-    ww = dcm.get("WindowWidth", None)
-    rs = dcm.get("RescaleSlope", None)
-    ri = dcm.get("RescaleIntercept", None)
+    pmi = _get_lut_value(dcm, "PhotometricInterpretation")
+    wc = _get_lut_value(dcm, "WindowCenter")
+    ww = _get_lut_value(dcm, "WindowWidth")
+    rs = _get_lut_value(dcm, "RescaleSlope")
+    ri = _get_lut_value(dcm, "RescaleIntercept")
 
     # Transforming the values linearly
     if rs:
