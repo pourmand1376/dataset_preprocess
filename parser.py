@@ -114,29 +114,35 @@ def post_process_sample(png_dir: Path, yolo_dir: Path, output_folder: Path):
 
 
 def check_process_sample(input_folder: Path, output_folder):
-    if not input_folder.is_dir():
-        logger.warning(
-            f"{input_folder} is not a valid folder to process as full sample"
-        )
-        return None
+    try:
+        if not input_folder.is_dir():
+            logger.warning(
+                f"{input_folder} is not a valid folder to process as full sample"
+            )
+            return None
 
-    if not is_full_sample(input_folder):
-        logger.warning(f"{input_folder} is not a valid full sample!")
+        if not is_full_sample(input_folder):
+            logger.warning(f"{input_folder} is not a valid full sample!")
 
-        # this is odd. sometimes data is in inner folder, we should check one level more!
-        # but this happens only if the inner folder has 1 subfolder
-        # This happens only in Normal folder
-        if len(list(input_folder.iterdir())) == 1:
-            first_subfolder = next(input_folder.iterdir())
-            return check_process_sample(first_subfolder, output_folder)
+            # this is odd. sometimes data is in inner folder, we should check one level more!
+            # but this happens only if the inner folder has 1 subfolder
+            # This happens only in Normal folder
+            if len(list(input_folder.iterdir())) == 1:
+                first_subfolder = next(input_folder.iterdir())
+                return check_process_sample(first_subfolder, output_folder)
 
-        return None
+            return None
 
-    png_dir, yolo_dir = process_full_sample(input_folder)
-    logger.info(f"full sample processed: {input_folder}")
-    if output_folder:
-        post_process_sample(png_dir, yolo_dir, output_folder)
-        logger.info(f"post process sample done from: {input_folder} to:{output_folder}")
+        png_dir, yolo_dir = process_full_sample(input_folder)
+        logger.info(f"full sample processed: {input_folder}")
+        if output_folder:
+            post_process_sample(png_dir, yolo_dir, output_folder)
+            logger.info(
+                f"post process sample done from: {input_folder} to:{output_folder}"
+            )
+
+    except BaseException:
+        logger.error("Error Happened!", exc_info=True)
 
 
 @app.command()
