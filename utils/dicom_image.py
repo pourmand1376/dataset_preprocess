@@ -61,13 +61,18 @@ def _correct_image_color_space(dcm) -> np.ndarray:
 
 
 def generate_image_file(dcm_file: Path, save_file: Path):
-    logger.info(f"reading {dcm_file}")
-    dcm = pydicom.read_file(dcm_file)
+    try:
+        logger.info(f"reading {dcm_file}")
+        dcm = pydicom.read_file(dcm_file)
 
-    if "AXIAL" in dcm.ImageType:
-        img = _correct_image_color_space(dcm)
-        logger.info(f"saving  {save_file}")
-        imageio.imwrite(save_file, cv2.resize(img, (512, 512)).astype(np.uint16))
+        if "AXIAL" in dcm.ImageType:
+            img = _correct_image_color_space(dcm)
+            logger.info(f"saving  {save_file}")
+            resized = cv2.resize(img, (512, 512)).astype(np.uint16)
+            imageio.imwrite(save_file, resized)
+
+    except BaseException:
+        logger.error("Error Happened!", exc_info=True)
 
 
 def _check_file(dcm_path, dcm_pref, save_dir):
