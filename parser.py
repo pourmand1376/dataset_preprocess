@@ -125,6 +125,7 @@ def check_process_sample(input_folder: Path, output_folder):
 
         # this is odd. sometimes data is in inner folder, we should check one level more!
         # but this happens only if the inner folder has 1 subfolder
+        # This happens only in Normal folder
         if len(list(input_folder.iterdir())) == 1:
             first_subfolder = next(input_folder.iterdir())
             return check_process_sample(first_subfolder, output_folder)
