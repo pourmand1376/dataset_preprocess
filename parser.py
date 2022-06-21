@@ -125,7 +125,6 @@ def check_process_sample(input_folder: Path, output_folder):
             return None
 
         if not is_full_sample(input_folder):
-            logger.warning(f"{input_folder} is not a valid full sample!")
 
             # this is odd. sometimes data is in inner folder, we should check one level more!
             # but this happens only if the inner folder has 1 subfolder
@@ -134,6 +133,7 @@ def check_process_sample(input_folder: Path, output_folder):
                 first_subfolder = next(input_folder.iterdir())
                 return check_process_sample(first_subfolder, output_folder)
 
+            logger.warning(f"{input_folder} is not a valid full sample!")
             return None
 
         png_dir, yolo_dir = process_full_sample(input_folder)
