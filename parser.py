@@ -30,6 +30,8 @@ def is_full_sample(folder: Path) -> bool:
             file.name == "AutoRun.exe"
             or file.name == "autorun.inf"
             or file.name == "PersianGulf_Help"
+            or file.name == "WebViewer"
+            or file.name == "CDViewer"
         ):
             return True
 
@@ -120,6 +122,13 @@ def check_process_sample(input_folder: Path, output_folder):
 
     if not is_full_sample(input_folder):
         logger.warning(f"{input_folder} is not a valid full sample!")
+
+        # this is odd. sometimes data is in inner folder, we should check one level more!
+        # but this happens only if the inner folder has 1 subfolder
+        if len(list(input_folder.iterdir())) == 1:
+            first_subfolder = next(input_folder.iterdir())
+            return check_process_sample(first_subfolder, output_folder)
+
         return None
 
     png_dir, yolo_dir = process_full_sample(input_folder)
