@@ -104,6 +104,9 @@ def post_process_sample(png_dir: Path, yolo_dir: Path, output_folder: Path):
     move_folder(png_dir, images_dir)
     png_dir.rmdir()
 
+    if yolo_dir is None:
+        return
+
     logger.info(f"moving {yolo_dir} to {output_folder}")
 
     labels_dir = output_folder / "labels"
