@@ -5,6 +5,7 @@ and converts them to yolo
 """
 
 import re
+from multiprocessing import Pool
 from pathlib import Path
 
 import typer
@@ -110,8 +111,26 @@ def post_process_sample(png_dir: Path, yolo_dir: Path, output_folder: Path):
     yolo_dir.rmdir()
 
 
+def check_process_sample(input_folder: Path, output_folder):
+    if not input_folder.is_dir():
+        logger.warning(
+            f"{input_folder} is not a valid folder to process as full sample"
+        )
+        return None
+
+    if not is_full_sample(input_folder):
+        logger.warning(f"{input_folder} is not a valid full sample!")
+        return None
+
+    png_dir, yolo_dir = process_full_sample(input_folder)
+    logger.info(f"full sample processed: {input_folder}")
+    if output_folder:
+        post_process_sample(png_dir, yolo_dir, output_folder)
+        logger.info(f"post process sample done from: {input_folder} to:{output_folder}")
+
+
 @app.command()
-def main(input_path: str, output_folder: str = None):
+def main(input_folder: str, output_folder: str = None, cores: int = 1):
     """
     There are two possible ways inputpath can be interpreted
 
@@ -120,24 +139,25 @@ def main(input_path: str, output_folder: str = None):
     Second: It will be interpreted as a folder containing multiple samples
     In this case, we will process each subfolder accordingly.
     """
-    input_path = Path(input_path)
+    input_folder = Path(input_folder)
     if output_folder:
         output_folder = Path(output_folder)
 
-    if is_full_sample(input_path):
+    if is_full_sample(input_folder):
         logger.info("Processing Just One sample")
-        png_dir, yolo_dir = process_full_sample(input_path)
-        if output_folder:
-            post_process_sample(png_dir, yolo_dir, output_folder)
+        check_process_sample(input_folder, output_folder)
     # if it is not a full sample, it is a list of full samples!
     else:
         logger.info("Processing Batch of samples")
-        for file in input_path.iterdir():
-            if file.is_dir():
-                if is_full_sample(file):
-                    png_dir, yolo_dir = process_full_sample(file)
-                    if output_folder:
-                        post_process_sample(png_dir, yolo_dir, output_folder)
+
+        pool = Pool(processes=cores)
+        logger.info(f"using {cores} cores!")
+        counts = pool.starmap(
+            check_process_sample,
+            [(folder, output_folder) for folder in input_folder.iterdir()],
+        )
+        logger.info(f"Found {counts} spots!")
+        logger.info("Processing Successfully finished")
 
 
 if __name__ == "__main__":
