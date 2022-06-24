@@ -8,6 +8,7 @@ import imageio
 import numpy as np
 import pandas as pd
 import pydicom
+from pydicom.dataset import FileDataset
 from pydicom.multival import MultiValue
 
 from logger import logger
@@ -73,16 +74,22 @@ def _correct_image_color_space(dcm) -> np.ndarray:
     return y
 
 
+def check_axial_image(dcm: FileDataset):
+    if "ImageType" in dcm:
+        return "AXIAL" in dcm.ImageType or (
+            "MPR" in dcm.ImageType and "Ax" in dcm.SeriesDescription
+        )
+    if "ImageOrientationPatient" in dcm:
+        return dcm.ImageOrientationPatient == [1, 0, 0, 0, 1, 0]
+
+    return False
+
+
 def generate_image_file(dcm_file: Path, save_file: Path):
     try:
         logger.info(f"reading {dcm_file}")
         dcm = pydicom.read_file(dcm_file)
-
-        if "AXIAL" in dcm.ImageType or (
-            "MPR" in dcm.ImageType
-            and "Ax" in dcm.SeriesDescription
-            # These are actually Multiplanar pictures and they may contain AXIAL images
-        ):
+        if check_axial_image(dcm):
             img = _correct_image_color_space(dcm)
             logger.info(f"saving  {save_file}")
             resized = cv2.resize(img, (512, 512)).astype(np.uint16)
