@@ -36,6 +36,9 @@ def _parse_annotations(sample: dict):
         y = values.pop(0)
         coordinates.append({"x": x, "y": y})
 
+    if annotation.count(".") != len(coordinates):
+        logger.error(f"We couldn't match all coordinates {file_name}")
+
     return (file_name, coordinates)
 
 
