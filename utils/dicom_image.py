@@ -78,7 +78,11 @@ def generate_image_file(dcm_file: Path, save_file: Path):
         logger.info(f"reading {dcm_file}")
         dcm = pydicom.read_file(dcm_file)
 
-        if "AXIAL" in dcm.ImageType:
+        if "AXIAL" in dcm.ImageType or (
+            "MPR" in dcm.ImageType
+            and "Ax" in dcm.SeriesDescription
+            # These are actually Multiplanar pictures and they may contain AXIAL images
+        ):
             img = _correct_image_color_space(dcm)
             logger.info(f"saving  {save_file}")
             resized = cv2.resize(img, (512, 512)).astype(np.uint16)
