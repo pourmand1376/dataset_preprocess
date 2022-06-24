@@ -89,7 +89,7 @@ def generate_image_file(dcm_file: Path, save_file: Path):
             imageio.imwrite(save_file, resized)
 
     except BaseException:
-        logger.error("Error Happened!", exc_info=True)
+        logger.error(f"Error Happened in file {dcm_file}", exc_info=True)
 
 
 def _check_file(dcm_path, dcm_pref, save_dir):
