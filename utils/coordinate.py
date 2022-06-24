@@ -28,6 +28,8 @@ def _parse_annotations(sample: dict):
     if not annotation or annotation is None:
         return None
 
+    annotation = annotation.split("|")[1]
+
     values = re.findall(r"\d{3}\.\d{6}", annotation)
 
     coordinates = []
@@ -36,7 +38,7 @@ def _parse_annotations(sample: dict):
         y = values.pop(0)
         coordinates.append({"x": x, "y": y})
 
-    if annotation.count(".") != len(coordinates):
+    if annotation.count(".") != len(coordinates) * 2:
         logger.error(f"We couldn't match all coordinates {file_name}")
 
     return (file_name, coordinates)
