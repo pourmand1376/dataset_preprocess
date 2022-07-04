@@ -39,21 +39,28 @@ def _rename_files_append_folder(folder_path: Path):
 
 
 @app.command()
-def main(input_folder: str):
+def main(input_folder: str, output_folder):
     """
     this one receives a path which has following structure in it
     input_folder(KUMC)/
         train2019/
+            Annotation/
+            Image/
         test2019/
         val2019/
     """
     input_folder = Path(input_folder)
+    output_folder = Path(output_folder)
+
     for folder in input_folder.iterdir():
         if not folder.is_dir():
             continue
 
         _rename_files_append_folder(folder / "Annotation")
-        _rename_files_append_folder(folder / "Image")
+        _rename_files_append_folder(folder / "images")
+
+        (folder / "Annotation").rename(output_folder / "Annotation")
+        (folder / "Image").rename(output_folder / "images")
 
 
 if __name__ == "__main__":
