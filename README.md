@@ -1,4 +1,4 @@
-# dicom-anevrism
+# DICOM - Aneurysm
 
 This project receives a folder containing patients who have done a CT-Scan and extracts images from all subfolders. The code is written to be compatible for specific data we have used. 
 
