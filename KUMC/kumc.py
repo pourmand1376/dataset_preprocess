@@ -33,7 +33,7 @@ def _rename_files_append_folder(folder_path: Path):
             continue
 
         new_name = f"{file.parent.name}_{file.name}"
-        changed = file.rename(new_name)
+        changed = file.rename(file.parent / new_name)
         logger.info(f"file {file.name} renamed to {changed}")
 
 
