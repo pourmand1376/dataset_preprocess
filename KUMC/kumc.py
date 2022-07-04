@@ -52,7 +52,8 @@ def main(input_folder: str):
         if not folder.is_dir():
             continue
 
-        _rename_files_append_folder(folder)
+        _rename_files_append_folder(folder / "Annotation")
+        _rename_files_append_folder(folder / "Image")
 
 
 if __name__ == "__main__":
