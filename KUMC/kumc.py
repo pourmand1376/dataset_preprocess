@@ -29,12 +29,12 @@ def _rename_files_append_folder(folder_path: Path):
 
     for file in folder_path.iterdir():
         if file.is_dir():
-            loggger.warning(f"file {file} is ignored")
+            logger.warning(f"file {file} is ignored")
             continue
 
         new_name = f"{file.parent.name}_{file.name}"
-        file.rename(new_name)
-        logger.info(f"file {file.name} renamed to {new_name}")
+        changed = file.rename(new_name)
+        logger.info(f"file {file.name} renamed to {changed}")
 
 
 @app.command()
