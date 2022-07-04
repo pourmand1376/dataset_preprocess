@@ -2,6 +2,7 @@
 This file processes a KUMC dataset to make it suitable for YOLOv5
 """
 
+import os
 from pathlib import Path
 
 import typer
@@ -33,8 +34,8 @@ def _rename_files_append_folder(folder_path: Path):
             continue
 
         new_name = f"{file.parent.name}_{file.name}"
-        changed = file.rename(file.parent / new_name)
-        logger.info(f"file {file.name} renamed to {changed}")
+        os.rename(str(file), str(folder_path / new_name))
+        logger.info(f"file {file.name} renamed to {new_name}")
 
 
 @app.command()
