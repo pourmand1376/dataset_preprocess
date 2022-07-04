@@ -5,8 +5,7 @@ This file processes a KUMC dataset to make it suitable for YOLOv5
 from pathlib import Path
 
 import typer
-
-from ..logger import logger
+from logger import logger
 
 app = typer.Typer(name="KUMC Parser", add_completion=False)
 
