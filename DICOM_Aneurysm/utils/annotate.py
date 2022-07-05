@@ -61,6 +61,9 @@ def _generate_yolo(
     b_height /= image_height
 
     if b_width <= 13 or b_height <= 13:
+        logger.info(
+            f"file {yolo_file} ignored since it has width={b_width}, height={b_height}"
+        )
         return yolo_dir
     # class label is always zero
     yolo_file.write_text(
