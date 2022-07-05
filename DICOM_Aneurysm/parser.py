@@ -4,12 +4,12 @@ It gets a patient full sample or a directory containing full samples
 and converts them to yolo
 """
 
+import json
 import re
 from multiprocessing import Pool
 from pathlib import Path
 
 import typer
-
 from logger import logger
 from utils import annotate, coordinate, dicom_image
 from utils.utility import find_all_numbers_folder, move_folder
@@ -76,10 +76,17 @@ def process_full_sample(folder: Path):
 
     png_dir = dcm_files[0].parent.parent / "png"
     png_dir.mkdir(exist_ok=True)
+
+    spacing_list = []
     for file in dcm_files:
         file_name = "_".join(str(file).split("/")[-5:])
         png_file = png_dir / f"{file_name}.png"
-        dicom_image.generate_image_file(file, png_file)
+        dicom_image.generate_image_file(file, png_file, spacing_list)
+
+    spacing_file = dcm_files[0].parent.parent / "spacing.json"
+    spacing_file.write_text(
+        json.dumps(spacing_list),
+    )
 
     yolo_dir = annotate.process_needed_files(png_dir, annotations)
 
@@ -144,7 +151,7 @@ def check_process_sample(input_folder: Path, output_folder):
                 f"post process sample done from: {input_folder} to:{output_folder}"
             )
 
-    except BaseException:
+    except Exception:
         logger.error("Error Happened!", exc_info=True)
 
 

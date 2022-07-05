@@ -8,10 +8,9 @@ import imageio
 import numpy as np
 import pandas as pd
 import pydicom
+from logger import logger
 from pydicom.dataset import FileDataset
 from pydicom.multival import MultiValue
-
-from logger import logger
 
 
 def _correct_image_color_space(dcm) -> np.ndarray:
@@ -85,17 +84,26 @@ def check_axial_image(dcm: FileDataset):
     return False
 
 
-def generate_image_file(dcm_file: Path, save_file: Path):
+def generate_image_file(dcm_file: Path, save_file: Path, spacing):
     try:
         logger.info(f"reading {dcm_file}")
         dcm = pydicom.read_file(dcm_file)
         if check_axial_image(dcm):
             img = _correct_image_color_space(dcm)
             logger.info(f"saving  {save_file}")
+            if dcm.Rows != 512 or dcm.Columns != 512:
+                logger.warning(
+                    f"found dicom image {dcm_file} with size {dcm.Rows},{dcm.Columns}"
+                )
+
             resized = cv2.resize(img, (512, 512)).astype(np.uint16)
             imageio.imwrite(save_file, resized)
+            spacing_x, spacing_y = dcm.PixelSpacing
+            spacing.append(
+                {"file_name": save_file.name, "x": spacing_x, "y": spacing_y}
+            )
 
-    except BaseException:
+    except Exception:
         logger.error(f"Error Happened in file {dcm_file}", exc_info=True)
 
 
