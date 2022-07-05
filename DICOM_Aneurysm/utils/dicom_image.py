@@ -91,10 +91,10 @@ def generate_image_file(dcm_file: Path, save_file: Path, spacing):
         if check_axial_image(dcm):
             img = _correct_image_color_space(dcm)
             logger.info(f"saving  {save_file}")
-            if dcm.Rows != 512 or dcm.Columns != 512:
-                logger.warning(
-                    f"found dicom image {dcm_file} with size {dcm.Rows},{dcm.Columns}"
-                )
+            # if dcm.Rows != 512 or dcm.Columns != 512:
+            # logger.warning(
+            # f"found dicom image {dcm_file} with size {dcm.Rows},{dcm.Columns}"
+            # )
 
             resized = cv2.resize(img, (512, 512)).astype(np.uint16)
             imageio.imwrite(save_file, resized)
