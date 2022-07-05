@@ -54,17 +54,17 @@ def _generate_yolo(
     b_width = max_x - min_x
     b_height = max_y - min_y
 
+    if b_width <= 10 or b_height <= 10:
+        logger.info(
+            f"file {yolo_file} ignored since it has width={b_width}, height={b_height}"
+        )
+        return yolo_dir
     # Normalise the co-ordinates by the dimensions of the image
     b_center_x /= image_width
     b_center_y /= image_height
     b_width /= image_width
     b_height /= image_height
 
-    if b_width <= 13 or b_height <= 13:
-        logger.info(
-            f"file {yolo_file} ignored since it has width={b_width}, height={b_height}"
-        )
-        return yolo_dir
     # class label is always zero
     yolo_file.write_text(
         f"0 {b_center_x:.7f} {b_center_y:.7f} {b_width:.7f} {b_height:.7f}"
