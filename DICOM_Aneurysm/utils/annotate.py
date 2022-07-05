@@ -7,7 +7,6 @@ from pathlib import Path
 import cv2
 import imageio
 import numpy as np
-
 from logger import logger
 
 from .utility import find_all_numbers_folder
@@ -61,6 +60,8 @@ def _generate_yolo(
     b_width /= image_width
     b_height /= image_height
 
+    if b_width <= 13 or b_height <= 13:
+        return yolo_dir
     # class label is always zero
     yolo_file.write_text(
         f"0 {b_center_x:.7f} {b_center_y:.7f} {b_width:.7f} {b_height:.7f}"
