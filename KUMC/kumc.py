@@ -24,18 +24,14 @@ def _rename_files_append_folder(folder_path: Path):
         test_2.xml
         test_3.xml
     """
-    if not folder_path.is_dir():
-        logger.warning("given path is not folder")
-        return
+    folder_path = str(folder_path)
+    for dirpath, _, files in os.walk(folder_path):
+        for f in files:
+            from_ = os.path.join(dirpath, f)
+            to = os.path.join(dirpath, os.path.split(dirpath)[-1] + "_" + f)
 
-    for file in folder_path.iterdir():
-        if file.is_dir():
-            logger.warning(f"file {file} is ignored")
-            continue
-
-        new_name = f"{file.parent.name}_{file.name}"
-        os.rename(str(file), str(folder_path / new_name))
-        logger.info(f"file {file.name} renamed to {new_name}")
+            logger.info(f"renaming from {from_} to {to}")
+            os.rename(from_, to)
 
 
 @app.command()
