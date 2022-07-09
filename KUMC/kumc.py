@@ -68,8 +68,8 @@ def main(input_folder: str, output_folder):
             logger.info(
                 f"creating folder {to_annotation_folder} and {to_images_folder}"
             )
-            to_annotation_folder.mkdir(exist_ok=True)
-            to_images_folder.mkdir(exist_ok=True)
+            to_annotation_folder.mkdir(exist_ok=True, parents=True)
+            to_images_folder.mkdir(exist_ok=True, parents=True)
 
             logger.info(f"moving {from_annotation_folder} to {to_annotation_folder}")
             from_annotation_folder.rename(to_annotation_folder)
