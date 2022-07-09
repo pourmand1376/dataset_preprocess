@@ -67,7 +67,7 @@ def main(dataset_dir: str, classes: str):
         if not os.path.exists(output_path):
             os.makedirs(output_path)
 
-        image_paths = getImagesInDir(str(dir_path))
+        image_paths = getImagesInDir(str(dir_path / "images"))
         breakpoint()
         list_file = open(str(dir_path) + '.txt', 'w')
 
