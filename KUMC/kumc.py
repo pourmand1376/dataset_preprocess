@@ -45,32 +45,36 @@ def main(input_folder: str, output_folder):
         test2019/
         val2019/
     """
-    input_folder = Path(input_folder)
-    output_folder = Path(output_folder)
-    output_folder.mkdir(exist_ok=True)
+    try:
+        input_folder = Path(input_folder)
+        output_folder = Path(output_folder)
+        output_folder.mkdir(exist_ok=True)
 
-    for folder in input_folder.iterdir():
-        if not folder.is_dir():
-            continue
+        for folder in input_folder.iterdir():
+            if not folder.is_dir():
+                continue
 
-        from_annotation_folder = folder / "Annotation"
-        from_image_folder = folder / "Image"
+            from_annotation_folder = folder / "Annotation"
+            from_image_folder = folder / "Image"
 
-        logger.info(f"Start preprocess folder {from_annotation_folder}")
-        _rename_files_append_folder(from_annotation_folder)
-        logger.info(f"Start preprocess folder {from_image_folder}")
-        _rename_files_append_folder(from_image_folder)
+            logger.info(f"Start preprocess folder {from_annotation_folder}")
+            _rename_files_append_folder(from_annotation_folder)
+            logger.info(f"Start preprocess folder {from_image_folder}")
+            _rename_files_append_folder(from_image_folder)
 
-        to_annotation_folder = output_folder / folder.name / "Annotation"
-        to_images_folder = output_folder / folder.name / "images"
+            to_annotation_folder = output_folder / folder.name / "Annotation"
+            to_images_folder = output_folder / folder.name / "images"
 
-        to_annotation_folder.mkdir(exist_ok=True)
-        to_images_folder.mkdir(exist_ok=True)
+            to_annotation_folder.mkdir(exist_ok=True)
+            to_images_folder.mkdir(exist_ok=True)
 
-        logger.info(f"moving {from_annotation_folder} to {to_annotation_folder}")
-        from_annotation_folder.rename(to_annotation_folder)
-        logger.info(f"moving {from_image_folder} to {to_images_folder}")
-        from_image_folder.rename(to_images_folder)
+            logger.info(f"moving {from_annotation_folder} to {to_annotation_folder}")
+            from_annotation_folder.rename(to_annotation_folder)
+            logger.info(f"moving {from_image_folder} to {to_images_folder}")
+            from_image_folder.rename(to_images_folder)
+
+    except Exception:
+        logger.error(exc_info=True)
 
 
 if __name__ == "__main__":
