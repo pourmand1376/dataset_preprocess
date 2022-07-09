@@ -59,17 +59,17 @@ def main(dataset_dir: str, classes: str):
     dataset_dir = Path(dataset_dir)
     classes = classes.split(',')
     for dir_path in dataset_dir.iterdir():
-        output_path = dir_path +'/yolo/'
+        output_path = dir_path / 'labels'
 
         if not os.path.exists(output_path):
             os.makedirs(output_path)
 
-        image_paths = getImagesInDir(dir_path)
-        list_file = open(dir_path + '.txt', 'w')
+        image_paths = getImagesInDir(str(dir_path))
+        list_file = open(str(dir_path) + '.txt', 'w')
 
         for image_path in image_paths:
             list_file.write(image_path + '\n')
-            convert_annotation(dir_path, output_path, image_path,classes)
+            convert_annotation(str(dir_path), output_path, image_path,classes)
         list_file.close()
 
         print("Finished processing: " + dir_path)
