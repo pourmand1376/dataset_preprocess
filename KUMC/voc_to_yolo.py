@@ -61,13 +61,14 @@ def main(dataset_dir: str, classes: str):
     for dir_path in dataset_dir.iterdir():
         if not dir_path.is_dir():
             continue
-        
+
         output_path = dir_path / 'labels'
 
         if not os.path.exists(output_path):
             os.makedirs(output_path)
 
         image_paths = getImagesInDir(str(dir_path))
+        breakpoint()
         list_file = open(str(dir_path) + '.txt', 'w')
 
         for image_path in image_paths:
