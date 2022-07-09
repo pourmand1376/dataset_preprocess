@@ -77,9 +77,9 @@ def main(input_folder: str, output_folder):
             logger.info(f"moving {from_image_folder} to {to_images_folder}")
             from_image_folder.rename(to_images_folder)
 
-            sh.cd(to_images_folder)
+            sh.cd(str(to_images_folder))
             sh.mv("*/*", ".")
-            sh.cd(to_annotation_folder)
+            sh.cd(str(to_annotation_folder))
             sh.mv("*/*", ".")
 
     except Exception:
