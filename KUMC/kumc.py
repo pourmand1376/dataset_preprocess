@@ -65,6 +65,9 @@ def main(input_folder: str, output_folder):
             to_annotation_folder = output_folder / folder.name / "Annotation"
             to_images_folder = output_folder / folder.name / "images"
 
+            logger.info(
+                f"creating folder {to_annotation_folder} and {to_images_folder}"
+            )
             to_annotation_folder.mkdir(exist_ok=True)
             to_images_folder.mkdir(exist_ok=True)
 
