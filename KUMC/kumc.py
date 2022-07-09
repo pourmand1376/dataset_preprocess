@@ -28,8 +28,8 @@ def _move_all_subfolder_files_to_main_folder(folder_path: Path):
         return
 
     for subfolder in folder_path.iterdir():
-        for file in subfolder.glob("*/*"):
-            file.rename(subfolder / file.name)
+        for file in subfolder.iterdir():
+            file.rename(folder_path / file.name)
 
 
 def _rename_files_append_folder(folder_path: Path):
