@@ -59,6 +59,9 @@ def main(dataset_dir: str, classes: str):
     dataset_dir = Path(dataset_dir)
     classes = classes.split(',')
     for dir_path in dataset_dir.iterdir():
+        if not dir_path.is_dir():
+            continue
+        
         output_path = dir_path / 'labels'
 
         if not os.path.exists(output_path):
