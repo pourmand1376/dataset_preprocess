@@ -61,8 +61,8 @@ def main(input_folder: str, output_folder):
         logger.info(f"Start preprocess folder {from_image_folder}")
         _rename_files_append_folder(from_image_folder)
 
-        to_annotation_folder = output_folder / "Annotation"
-        to_images_folder = output_folder / "images"
+        to_annotation_folder = output_folder / folder.name / "Annotation"
+        to_images_folder = output_folder / folder.name / "images"
 
         to_annotation_folder.mkdir(exist_ok=True)
         to_images_folder.mkdir(exist_ok=True)
