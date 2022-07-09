@@ -12,6 +12,26 @@ from logger import logger
 app = typer.Typer(name="KUMC Parser", add_completion=False)
 
 
+def _move_all_subfolder_files_to_main_folder(folder_path: Path):
+    """
+    This function will move all files in all subdirectories to the folder_path dir.
+    folder_path/
+        1/
+            1.jpg
+            2.jpg
+    outputs:
+    folder_path/
+        1.jpg
+        2.jpg
+    """
+    if not folder_path.is_dir():
+        return
+
+    for subfolder in folder_path.iterdir():
+        for file in subfolder.glob("*/*"):
+            file.rename(subfolder / file.name)
+
+
 def _rename_files_append_folder(folder_path: Path):
     """
     this method receives a folder like this
@@ -77,10 +97,8 @@ def main(input_folder: str, output_folder):
             logger.info(f"moving {from_image_folder} to {to_images_folder}")
             from_image_folder.rename(to_images_folder)
 
-            sh.cd(str(to_images_folder))
-            sh.mv("*/*", ".")
-            sh.cd(str(to_annotation_folder))
-            sh.mv("*/*", ".")
+            _move_all_subfolder_files_to_main_folder(to_images_folder)
+            _move_all_subfolder_files_to_main_folder(to_annotation_folder)
 
     except Exception:
         logger.error(exc_info=True)
