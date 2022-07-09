@@ -68,7 +68,6 @@ def main(dataset_dir: str, classes: str):
             os.makedirs(output_path)
 
         image_paths = getImagesInDir(str(dir_path / "images"))
-        breakpoint()
         list_file = open(str(dir_path) + '.txt', 'w')
 
         for image_path in image_paths:
