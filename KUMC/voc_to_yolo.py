@@ -69,10 +69,10 @@ def main(dataset_dir: str, classes: str):
 
         for image_path in image_paths:
             list_file.write(image_path + '\n')
-            convert_annotation(str(dir_path), output_path, image_path,classes)
+            convert_annotation(str(dir_path), output_path, image_path ,classes)
         list_file.close()
 
-        print("Finished processing: " + dir_path)
+        print("Finished processing: " + str(dir_path))
 
 if __name__ == '__main__':
     app()
