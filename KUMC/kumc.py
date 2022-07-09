@@ -5,6 +5,7 @@ This file processes a KUMC dataset to make it suitable for YOLOv5
 import os
 from pathlib import Path
 
+import sh
 import typer
 from logger import logger
 
@@ -75,6 +76,11 @@ def main(input_folder: str, output_folder):
             from_annotation_folder.rename(to_annotation_folder)
             logger.info(f"moving {from_image_folder} to {to_images_folder}")
             from_image_folder.rename(to_images_folder)
+
+            sh.cd(to_images_folder)
+            sh.mv("*/*", ".")
+            sh.cd(to_annotation_folder)
+            sh.mv("*/*", ".")
 
     except Exception:
         logger.error(exc_info=True)
