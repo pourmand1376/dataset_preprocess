@@ -5,7 +5,6 @@ This file processes a KUMC dataset to make it suitable for YOLOv5
 import os
 from pathlib import Path
 
-import sh
 import typer
 from logger import logger
 
