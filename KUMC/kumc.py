@@ -100,7 +100,7 @@ def main(input_folder: str, output_folder):
             _move_all_subfolder_files_to_main_folder(to_annotation_folder)
 
     except Exception:
-        logger.error(exc_info=True)
+        logger.error("There was error!", exc_info=True)
 
 
 if __name__ == "__main__":
