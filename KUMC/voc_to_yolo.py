@@ -31,9 +31,9 @@ def _convert_voc_to_yolo(content: str, class_dict):
         content["object"] = [content["object"]]
 
     yolo_content = ""
-    for object in content["object"]:
-        class_index = class_dict[object["name"]]
-        bbox = object["bndbox"]
+    for object_ in content["object"]:
+        class_index = class_dict[object_["name"]]
+        bbox = object_["bndbox"]
 
         xmin = int(bbox["xmin"])
         xmax = int(bbox["xmax"])
@@ -43,18 +43,20 @@ def _convert_voc_to_yolo(content: str, class_dict):
         yolo_coordinates = _convert_box(
             xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, width=width, height=height
         )
-        yolo_content = (
-            yolo_content
-            + "\n"
-            + f"{class_index} {yolo_coordinates[0]} {yolo_coordinates[1]} {yolo_coordinates[2]} {yolo_coordinates[3]}"
-        )
+        bbox_info= f"{class_index} {yolo_coordinates[0]} {yolo_coordinates[1]} {yolo_coordinates[2]} {yolo_coordinates[3]}"
+
+        if len(yolo_content)==0:
+            yolo_content = bbox_info
+        else 
+            yolo_content = yolo_content + '\n' + bbox_info
+
     return yolo_content
 
 
 @app.command()
 def main(
     dataset_dir: str = typer.Argument(
-        ..., help="the directory that contains train, test, val data"
+        ..., help="the directory that contains annotations"
     ),
     classes: str = typer.Argument(..., help="Class names splited by comma"),
 ):
