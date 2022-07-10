@@ -27,6 +27,9 @@ def _convert_voc_to_yolo(content: str, class_dict):
     width = int(content["size"]["width"])
     height = int(content["size"]["height"])
 
+    if "object" not in content:
+        return None
+
     if isinstance(content["object"], dict):
         # make this a list if it only has one bbox
         content["object"] = [content["object"]]
@@ -80,6 +83,9 @@ def main(
         text = file.read_text()
         content = xmltodict.parse(text)
         yolo_content = _convert_voc_to_yolo(content, classes_dict)
+
+        if yolo_content is None:
+            continue
 
         sibling_parent = file.parent.parent / "labels"
         sibling_parent.mkdir(exist_ok=True, parents=True)
