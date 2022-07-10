@@ -80,9 +80,11 @@ def main(input_folder: str, output_folder):
                 from_image_folder = folder / "Image"
 
                 logger.info(f"Start preprocess folder {from_annotation_folder}")
-                _rename_files_append_folder(from_annotation_folder)
+                if folder.name != "train2019":
+                    _rename_files_append_folder(from_annotation_folder)
                 logger.info(f"Start preprocess folder {from_image_folder}")
-                _rename_files_append_folder(from_image_folder)
+                if folder.name != "train2019":
+                    _rename_files_append_folder(from_image_folder)
 
                 to_annotation_folder = output_folder / folder.name / "Annotation"
                 to_images_folder = output_folder / folder.name / "images"
