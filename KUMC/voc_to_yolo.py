@@ -1,8 +1,8 @@
 from pathlib import Path
 
-import logger
 import typer
 import xmltodict
+from logger import logger
 
 app = typer.Typer(name="Convert VOC to YOLO")
 
@@ -76,7 +76,7 @@ def main(
         classes_dict[item] = index
 
     for file in dataset_dir.glob("**/*.xml"):
-
+        logger.info(f"parsing file {file}")
         text = file.read_text()
         content = xmltodict.parse(text)
         yolo_content = _convert_voc_to_yolo(content, classes_dict)
