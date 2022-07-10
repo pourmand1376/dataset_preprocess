@@ -49,10 +49,7 @@ def _convert_voc_to_yolo(content: str, class_dict):
         )
         bbox_info = f"{class_index} {yolo_coordinates[0]} {yolo_coordinates[1]} {yolo_coordinates[2]} {yolo_coordinates[3]}"
 
-        if len(yolo_content) == 0:
-            yolo_content = bbox_info
-        else:
-            yolo_content = yolo_content + "\n" + bbox_info
+        yolo_content = bbox_info + "\n" + yolo_content
 
     return yolo_content
 
