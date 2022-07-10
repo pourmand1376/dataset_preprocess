@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import logger
 import typer
 import xmltodict
 
@@ -75,6 +76,7 @@ def main(
         classes_dict[item] = index
 
     for file in dataset_dir.glob("**/*.xml"):
+
         text = file.read_text()
         content = xmltodict.parse(text)
         yolo_content = _convert_voc_to_yolo(content, classes_dict)
