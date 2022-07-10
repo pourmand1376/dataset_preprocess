@@ -4,6 +4,7 @@ This file processes a KUMC dataset to make it suitable for YOLOv5
 
 import os
 from pathlib import Path
+from sys import exc_info
 
 import typer
 from logger import logger
@@ -71,33 +72,39 @@ def main(input_folder: str, output_folder):
         output_folder.mkdir(exist_ok=True)
 
         for folder in input_folder.iterdir():
-            if not folder.is_dir():
-                continue
+            try:
+                if not folder.is_dir():
+                    continue
 
-            from_annotation_folder = folder / "Annotation"
-            from_image_folder = folder / "Image"
+                from_annotation_folder = folder / "Annotation"
+                from_image_folder = folder / "Image"
 
-            logger.info(f"Start preprocess folder {from_annotation_folder}")
-            _rename_files_append_folder(from_annotation_folder)
-            logger.info(f"Start preprocess folder {from_image_folder}")
-            _rename_files_append_folder(from_image_folder)
+                logger.info(f"Start preprocess folder {from_annotation_folder}")
+                _rename_files_append_folder(from_annotation_folder)
+                logger.info(f"Start preprocess folder {from_image_folder}")
+                _rename_files_append_folder(from_image_folder)
 
-            to_annotation_folder = output_folder / folder.name / "Annotation"
-            to_images_folder = output_folder / folder.name / "images"
+                to_annotation_folder = output_folder / folder.name / "Annotation"
+                to_images_folder = output_folder / folder.name / "images"
 
-            logger.info(
-                f"creating folder {to_annotation_folder} and {to_images_folder}"
-            )
-            to_annotation_folder.mkdir(exist_ok=True, parents=True)
-            to_images_folder.mkdir(exist_ok=True, parents=True)
+                logger.info(
+                    f"creating folder {to_annotation_folder} and {to_images_folder}"
+                )
+                to_annotation_folder.mkdir(exist_ok=True, parents=True)
+                to_images_folder.mkdir(exist_ok=True, parents=True)
 
-            logger.info(f"moving {from_annotation_folder} to {to_annotation_folder}")
-            from_annotation_folder.rename(to_annotation_folder)
-            logger.info(f"moving {from_image_folder} to {to_images_folder}")
-            from_image_folder.rename(to_images_folder)
+                logger.info(
+                    f"moving {from_annotation_folder} to {to_annotation_folder}"
+                )
+                from_annotation_folder.rename(to_annotation_folder)
+                logger.info(f"moving {from_image_folder} to {to_images_folder}")
+                from_image_folder.rename(to_images_folder)
 
-            _move_all_subfolder_files_to_main_folder(to_images_folder)
-            _move_all_subfolder_files_to_main_folder(to_annotation_folder)
+                _move_all_subfolder_files_to_main_folder(to_images_folder)
+                _move_all_subfolder_files_to_main_folder(to_annotation_folder)
+
+            except Exception:
+                logger.error("something happened inside loop", exc_info=True)
 
     except Exception:
         logger.error("There was error!", exc_info=True)
