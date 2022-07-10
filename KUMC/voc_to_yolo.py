@@ -1,83 +1,87 @@
-import glob
-import os
-import xml.etree.ElementTree as ET
-from os import  getcwd
-import typer
 from pathlib import Path
+
+import typer
+import xmltodict
 
 app = typer.Typer(name="Convert VOC to YOLO")
 
 
-def getImagesInDir(dir_path):
-    image_list = []
-    for filename in glob.glob(dir_path + '/*.jpg'):
-        image_list.append(filename)
+def _convert_box(xmin, xmax, ymin, ymax, width, height):
+    x_mid = (xmin + xmax) / 2
+    y_mid = (ymin + ymax) / 2
+    width_bbox = xmax - xmin
+    height_bbox = ymax - ymin
 
-    return image_list
+    x_mid = x_mid / width
+    width_bbox = width_bbox / width
 
-def convert(size, box):
-    dw = 1./(size[0])
-    dh = 1./(size[1])
-    x = (box[0] + box[1])/2.0 - 1
-    y = (box[2] + box[3])/2.0 - 1
-    w = box[1] - box[0]
-    h = box[3] - box[2]
-    x = x*dw
-    w = w*dw
-    y = y*dh
-    h = h*dh
-    return (x,y,w,h)
+    y_mid = y_mid / height
+    height_bbox = height_bbox / height
 
-def convert_annotation(dir_path, output_path, image_path,classes):
-    basename = os.path.basename(image_path)
-    basename_no_ext = os.path.splitext(basename)[0]
+    return x_mid, y_mid, width_bbox, height_bbox
 
-    in_file = open(dir_path + '/' + basename_no_ext + '.xml')
-    out_file = open(output_path + basename_no_ext + '.txt', 'w')
-    tree = ET.parse(in_file)
-    root = tree.getroot()
-    size = root.find('size')
-    w = int(size.find('width').text)
-    h = int(size.find('height').text)
 
-    for obj in root.iter('object'):
-        difficult = obj.find('difficult').text
-        cls = obj.find('name').text
-        if cls not in classes or int(difficult)==1:
-            continue
-        cls_id = classes.index(cls)
-        xmlbox = obj.find('bndbox')
-        b = (float(xmlbox.find('xmin').text), float(xmlbox.find('xmax').text), float(xmlbox.find('ymin').text), float(xmlbox.find('ymax').text))
-        bb = convert((w,h), b)
-        out_file.write(str(cls_id) + " " + " ".join([str(a) for a in bb]) + '\n')
+def _convert_voc_to_yolo(content: str, class_dict):
+    content = content["annotation"]
+    width = int(content["size"]["width"])
+    height = int(content["size"]["height"])
 
-cwd = getcwd()
+    if isinstance(content["object"], dict):
+        # make this a list if it only has one bbox
+        content["object"] = [content["object"]]
+
+    yolo_content = ""
+    for object in content["object"]:
+        class_index = class_dict[object["name"]]
+        bbox = object["bndbox"]
+
+        xmin = int(bbox["xmin"])
+        xmax = int(bbox["xmax"])
+        ymin = int(bbox["ymin"])
+        ymax = int(bbox["ymax"])
+
+        yolo_coordinates = _convert_box(
+            xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, width=width, height=height
+        )
+        yolo_content = (
+            yolo_content
+            + "\n"
+            + f"{class_index} {yolo_coordinates[0]} {yolo_coordinates[1]} {yolo_coordinates[2]} {yolo_coordinates[3]}"
+        )
+    return yolo_content
+
 
 @app.command()
-def main(dataset_dir: str, classes: str):
+def main(
+    dataset_dir: str = typer.Argument(
+        ..., help="the directory that contains train, test, val data"
+    ),
+    classes: str = typer.Argument(..., help="Class names splited by comma"),
+):
+    """
+    You input your dataset directory here
+    and the program will try to find all xml files within the folder recursively
+    and convert them to yolo format.
 
+    This code does not change file name to something odd.
+    Just xml is converted into txt.
+    """
     dataset_dir = Path(dataset_dir)
-    classes = classes.split(',')
-    for dir_path in dataset_dir.iterdir():
-        if not dir_path.is_dir():
-            continue
+    classes_dict = {}
 
-        output_path = dir_path / 'labels'
+    for index, item in enumerate(classes.split(",")):
+        classes_dict[item] = index
 
-        if not os.path.exists(output_path):
-            os.makedirs(output_path)
+    for file in dataset_dir.glob("**/*.xml"):
+        text = file.read_text()
+        content = xmltodict.parse(text)
+        yolo_content = _convert_voc_to_yolo(content, classes_dict)
 
-        image_paths = getImagesInDir(str(dir_path / "images"))
-        list_file = open(str(dir_path) + '.txt', 'w')
+        sibling_parent = file.parent.parent / "labels"
+        sibling_parent.mkdir(exist_ok=True, parents=True)
+        output_file = sibling_parent / file.name.replace("xml", "txt")
+        output_file.write_text(yolo_content)
 
-        for image_path in image_paths:
-            list_file.write(image_path + '\n')
-            convert_annotation(str(dir_path), output_path, image_path ,classes)
-        list_file.close()
 
-        print("Finished processing: " + str(dir_path))
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app()
-
-
