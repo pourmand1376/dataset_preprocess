@@ -8,13 +8,14 @@ app = typer.Typer(name="Evaluate", add_completion=False)
 
 
 @app.command()
-def main(dataset_folder: str, prediction_labels_folder: str):
+def main(dataset_folder: str, prediction_labels_folder: str, min_count: int = 2):
     """
     This function receives these arguments and produces patient-wise results.
     dataset_folder contains two folders images and labels.
     The program finds patient list via images folder and detects labels via labels folder.
     Then it compares that to prediction labels folder which is extracted via --save-txt
     parameter in yolo val.py file.
+    Min_count: minimum number of images to make a patient positive.
     """
 
     dataset_folder = Path(dataset_folder)
@@ -37,10 +38,11 @@ def main(dataset_folder: str, prediction_labels_folder: str):
         category = label.name.split("_")[0]
         if category in pred_positive_patients_:
             pred_positive_patients_[category] = pred_positive_patients_[category] + 1
-            if pred_positive_patients_[category] > 2:
-                pred_positive_patients.add(category)
         else:
             pred_positive_patients_[category] = 1
+
+        if pred_positive_patients_[category] >= min_count:
+            pred_positive_patients.add(category)
 
     negatives = all_patients.difference(real_positive_patients)
     neg_pred = all_patients.difference(pred_positive_patients)
