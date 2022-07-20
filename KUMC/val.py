@@ -45,6 +45,11 @@ def main(dataset_folder: str, prediction_labels_folder: str):
 
     print(f"TP: {tp}, FP: {fp}, FN: {fn}, TN: {tn}")
 
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+
+    print(f"Precision: {precision}, recall: {recall}")
+
 
 if __name__ == "__main__":
     app()
