@@ -7,6 +7,7 @@ import typer
 app = typer.Typer(name="Evaluate", add_completion=False)
 
 
+@app.command()
 def main(dataset_folder: str, prediction_labels_folder: str):
     """
     This function receives these arguments and produces patient-wise results.
