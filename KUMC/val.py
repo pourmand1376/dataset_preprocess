@@ -35,7 +35,7 @@ def main(dataset_folder: str, prediction_labels_folder: str):
     pred_positive_patients = set()
     for label in prediction_labels_folder.iterdir():
         category = label.name.split("_")[0]
-        if category in pred_positive_patients_.keys:
+        if category in pred_positive_patients_:
             pred_positive_patients_[category] = pred_positive_patients_[category] + 1
             if pred_positive_patients_[category] > 4:
                 pred_positive_patients.add(category)
