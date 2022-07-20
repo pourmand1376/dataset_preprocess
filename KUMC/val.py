@@ -24,8 +24,21 @@ def main(dataset_folder: str, prediction_labels_folder: str):
     images_folder = dataset_folder / "images"
     for image in images_folder.iterdir():
         all_patients.add(image.name.split("_")[0])
-    print(all_patients)
+
+    true_positive_patients = set()
+    true_labels_folder = dataset_folder / "labels"
+
+    for label in true_labels_folder.iterdir():
+        true_positive_patients.add(label.name.split("_")[0])
+
+    pred_positive_patients = set()
+    for label in prediction_labels_folder.iterdir():
+        pred_positive_patients.add(label.name.split("_")[0])
+
     print(len(all_patients))
+    print(len(true_positive_patients))
+    print(len(pred_positive_patients))
+    print(len(true_positive_patients.intersection(pred_positive_patients)))
 
 
 if __name__ == "__main__":
