@@ -31,9 +31,16 @@ def main(dataset_folder: str, prediction_labels_folder: str):
     for label in real_labels_folder.iterdir():
         real_positive_patients.add(label.name.split("_")[0])
 
+    pred_positive_patients_ = dict()
     pred_positive_patients = set()
     for label in prediction_labels_folder.iterdir():
-        pred_positive_patients.add(label.name.split("_")[0])
+        category = label.name.split("_")[0]
+        if category in pred_positive_patients_.keys:
+            pred_positive_patients_[category] = pred_positive_patients_[category] + 1
+            if pred_positive_patients_[category] > 4:
+                pred_positive_patients.add(category)
+        else:
+            pred_positive_patients_[category] = 1
 
     negatives = all_patients.difference(real_positive_patients)
     neg_pred = all_patients.difference(pred_positive_patients)
