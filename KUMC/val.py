@@ -34,6 +34,7 @@ def main(dataset_folder: str, prediction_labels_folder: str, min_count: int = 2)
 
     pred_positive_patients_ = dict()
     pred_positive_patients = set()
+
     for label in prediction_labels_folder.iterdir():
         category = label.name.split("_")[0]
         if category in pred_positive_patients_:
