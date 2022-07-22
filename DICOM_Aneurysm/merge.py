@@ -35,7 +35,8 @@ def convert_folder_images_to_3d(folder_path: str):
         previous_file = None
         pre_previous_file = None
 
-        for file in sorted(folder_path.glob(f"{patient}*")):
+        files = sorted(folder_path.glob(f"{patient}*"))
+        for file in files:
             if pre_previous_file is not None and previous_file is not None:
                 logger.info(f"Pre-Previous file: {pre_previous_file}")
                 logger.info(f"Previous file:     {previous_file}")
@@ -54,6 +55,10 @@ def convert_folder_images_to_3d(folder_path: str):
             pre_previous_file = previous_file
             previous_file = file
 
+        files[0].unlink()
+        logger.info(f"removed file {files[0]}")
+        files[-1].unlink()
+        logger.info(f"removed file {files[-1]}")
 
 @app.command()
 def main(yolo_dataset_file: str):
