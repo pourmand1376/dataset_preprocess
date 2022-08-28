@@ -24,7 +24,7 @@ merge: activate	## merge files from one channel to 3 channels
 	@echo "do it with cp -r"
 	@echo "=============================="
 	python merge.py \
-		'/mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_mosaic/database.yaml'
+		'/mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_mosaic_3d/database.yaml'
 	
 parse: activate ## parse files from dicom to png
 	python parser.py \
