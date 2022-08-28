@@ -21,7 +21,7 @@ install: ## create conda environment and install packages
 
 merge: activate	## merge files from one channel to 3 channels 
 	@echo "you have to make a complete copy of the folder before you can use merge!"
-	@echo "do it with cp -r"
+	@echo "do it with cp -r then change database.yaml file address"
 	@echo "=============================="
 	python merge.py \
 		'/mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_mosaic_3d/database.yaml'
