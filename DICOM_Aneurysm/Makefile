@@ -17,6 +17,7 @@ install: ## create conda environment and install packages
 	source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ;
 	conda create -n dicom_aneursym python=3.9
 	$(CONDA_ACTIVATE) dicom_aneursym
+	conda install opencv
 	pip install -r requirements.txt
 
 merge: activate	## merge files from one channel to 3 channels 
