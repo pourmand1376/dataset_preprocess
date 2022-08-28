@@ -19,7 +19,10 @@ install: ## create conda environment and install packages
 	$(CONDA_ACTIVATE) dicom_aneursym
 	pip install -r requirements.txt
 
-merge: activate ## merge files from one channel to 3 channels 
+merge: activate	## merge files from one channel to 3 channels 
+	@echo "you have to make a complete copy of the folder before you can use merge!"
+	@echo "do it with cp -r"
+	@echo "=============================="
 	python merge.py \
 		'/mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_mosaic/database.yaml'
 	
@@ -28,3 +31,4 @@ parse: activate ## parse files from dicom to png
 		'/mnt/new_ssd/projects/Anevrism/Data/brain_cta/Split' \
 		--output-folder '/mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_png' \
 		--cores 10
+

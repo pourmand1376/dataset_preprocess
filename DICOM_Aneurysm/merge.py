@@ -1,5 +1,6 @@
 """
 Convert three images to a single three-channel image for improving performance
+You will pass a complete folder and it will convert it for you in-place. So you have to make a copy for the folder. 
 """
 
 from operator import concat
