@@ -28,7 +28,7 @@ merge: update	## merge files from one channel to 3 channels
 	python merge.py \
 		'/mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_mosaic_3d/database.yaml'
 
-task=train
+task=val
 ## this task is first train, then val, then test,
 ## then you have to set a database.yaml file
 parse: update ## parse files from dicom to png
