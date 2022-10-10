@@ -41,4 +41,4 @@ min=2
 val_patient_normal_dataset: update ## see the results patient-wise
 	python val.py  /mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_folder/$(task)		\
 		/mnt/new_ssd/projects/Anevrism/Models/pourmand/yolov5/runs/val/$(exp)/labels/	\
-		--min-count=2
+		--min-count=$(min)
