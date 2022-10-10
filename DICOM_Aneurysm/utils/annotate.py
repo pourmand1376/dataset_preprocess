@@ -54,7 +54,7 @@ def _generate_yolo(
     b_width = max_x - min_x
     b_height = max_y - min_y
 
-    if b_width <= 10 or b_height <= 10:
+    if b_width <= 7 or b_height <= 7:
         logger.info(
             f"file {yolo_file} ignored since it has width={b_width}, height={b_height}"
         )
