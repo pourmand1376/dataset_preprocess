@@ -15,8 +15,8 @@ update: ## activate conda environment
 
 install: update## create conda environment and install packages
 	source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ;
-	conda create -n dicom_aneursym python=3.9
-	$(CONDA_ACTIVATE) dicom_aneursym
+	conda create -n dicom_aneurysm python=3.9
+	$(CONDA_ACTIVATE) dicom_aneurysm
 	conda install opencv
 	pip install -r requirements.txt
 
@@ -24,12 +24,12 @@ merge: update	## merge files from one channel to 3 channels
 	@echo "you have to make a complete copy of the folder before you can use merge!"
 	@echo "do it with cp -r then change database.yaml file address"
 	@echo "=============================="
-	$(CONDA_ACTIVATE) dicom_aneursym
+	$(CONDA_ACTIVATE) dicom_aneurysm
 	python merge.py \
 		'/mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_mosaic_3d/database.yaml'
 	
 parse: update ## parse files from dicom to png
-	$(CONDA_ACTIVATE) dicom_aneursym
+	$(CONDA_ACTIVATE) dicom_aneurysm
 	python parser.py \
 		'/mnt/new_ssd/projects/Anevrism/Data/brain_cta/Split' \
 		--output-folder '/mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_png' \
