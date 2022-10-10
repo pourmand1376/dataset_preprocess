@@ -35,7 +35,9 @@ parse: update ## parse files from dicom to png
 		--output-folder '/mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_png' \
 		--cores 10
 
+exp=exp29
+task=val
 val_patient_normal_dataset: update ## see the results patient-wise
-	python val.py  /mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_folder/val		\
-		/mnt/new_ssd/projects/Anevrism/Models/pourmand/yolov5/runs/val/exp28/labels/	\
+	python val.py  /mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_folder/$(task)		\
+		/mnt/new_ssd/projects/Anevrism/Models/pourmand/yolov5/runs/val/$(exp)/labels/	\
 		--min-count=3
