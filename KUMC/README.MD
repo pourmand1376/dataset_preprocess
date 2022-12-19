@@ -2,6 +2,10 @@
 
 Useful commands for this project
 
+```bash
+realpath dataset.yaml file #useful
+```
+
 Replace all names of ".txt" files with ".jpg"
 ```bash
 ls semi07-kvasir/labels/ | sed "s/.txt/.jpg/"
