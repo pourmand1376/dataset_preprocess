@@ -10,9 +10,8 @@ import re
 from pathlib import Path
 
 import typer
-from xmltodict import parse
-
 from logger import logger
+from xmltodict import parse
 
 app = typer.Typer(name="Parse XML file", add_completion=False)
 

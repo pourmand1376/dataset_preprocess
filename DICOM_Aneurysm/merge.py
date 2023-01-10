@@ -1,6 +1,6 @@
 """
 Convert three images to a single three-channel image for improving performance
-You will pass a complete folder and it will convert it for you in-place. So you have to make a copy for the folder. 
+You will pass a complete folder and it will convert it for you in-place. So you have to make a copy for the folder.
 """
 
 from operator import concat
@@ -47,9 +47,7 @@ def convert_folder_images_to_3d(folder_path: str):
                 previous_image = read_image(previous_file)
                 image = read_image(file)
 
-                concat_image = np.dstack(
-                    [pre_previous_image, previous_image, image]
-                )
+                concat_image = np.dstack([pre_previous_image, previous_image, image])
                 cv2.imwrite(str(previous_file), concat_image)
                 logger.info(f"saved into {previous_file}")
 
@@ -60,6 +58,7 @@ def convert_folder_images_to_3d(folder_path: str):
         logger.info(f"removed file {files[0]}")
         files[-1].unlink()
         logger.info(f"removed file {files[-1]}")
+
 
 @app.command()
 def main(yolo_dataset_file: str):
