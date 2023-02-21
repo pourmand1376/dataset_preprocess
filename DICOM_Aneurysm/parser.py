@@ -132,7 +132,6 @@ def check_process_sample(input_folder: Path, output_folder):
             return None
 
         if not is_full_sample(input_folder):
-
             # this is odd. sometimes data is in inner folder, we should check one level more!
             # but this happens only if the inner folder has 1 subfolder
             # This happens only in Normal folder

@@ -23,7 +23,6 @@ def find_all_numbers_folder(folder: Path):
 
 
 def move_folder(from_dir, to_dir):
-
     from_dir = str(from_dir)
     to_dir = str(to_dir)
 
