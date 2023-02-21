@@ -17,7 +17,6 @@ app = typer.Typer(name="Parse XML file", add_completion=False)
 
 
 def _parse_annotations(sample: dict):
-
     if "annotation" not in sample.keys():
         return None
 

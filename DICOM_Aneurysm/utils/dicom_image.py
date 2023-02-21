@@ -108,7 +108,6 @@ def generate_image_file(dcm_file: Path, save_file: Path, spacing):
 
 
 def _check_file(dcm_path, dcm_pref, save_dir):
-
     try:
         dcm = pydicom.read_file(dcm_path)
         img = _correct_image_color_space(dcm)
@@ -126,7 +125,6 @@ def _check_file(dcm_path, dcm_pref, save_dir):
 
 
 if __name__ == "__main__":
-
     parser = ArgumentParser()
     parser.add_argument("data_root")
     parser.add_argument("save_dir")
