@@ -42,11 +42,11 @@ exp=exp29
 task=val
 min=2
 val_patient_normal_dataset: update ## see the results patient-wise
-	python val.py  /mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_folder/$(task)		\
+	python val.py  /home/pourmand/Aneurysm2/Data/brain_cta/output_folder/$(task)		\
 		/mnt/new_ssd_2/projects/Anevrism/Models/pourmand/yolov5/runs/val/$(exp)/labels/	\
 		--min-count=$(min)
 
 val_patient_trimmed_dataset: update ## see the results patient-wise
-	python val.py  /mnt/new_ssd/projects/Anevrism/Data/brain_cta/output_trimmed/$(task)		\
+	python val.py  /home/pourmand/Aneurysm2/Data/brain_cta/output_trimmed/$(task)		\
 		/mnt/new_ssd_2/projects/Anevrism/Models/pourmand/yolov5/runs/val/$(exp)/labels/	\
 		--min-count=$(min)
