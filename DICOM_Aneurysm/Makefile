@@ -20,7 +20,7 @@ install: update## create conda environment and install packages
 	conda install opencv
 	pip install -r requirements.txt
 
-merge: update	## merge files from one channel to 3 channels 
+merge: update	## merge files from one channel to 3 channels
 	@echo "you have to make a complete copy of the folder before you can use merge!"
 	@echo "do it with cp -r then change database.yaml file address"
 	@echo "=============================="

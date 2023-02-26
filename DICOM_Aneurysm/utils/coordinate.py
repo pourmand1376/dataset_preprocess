@@ -10,15 +10,13 @@ import re
 from pathlib import Path
 
 import typer
-from xmltodict import parse
-
 from logger import logger
+from xmltodict import parse
 
 app = typer.Typer(name="Parse XML file", add_completion=False)
 
 
 def _parse_annotations(sample: dict):
-
     if "annotation" not in sample.keys():
         return None
 
