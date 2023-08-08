@@ -1,8 +1,10 @@
 ## To Convert the dataset to YOLO format
-Add `dataset.yaml` in your kumc folder according to 
-[this documentation](https://github.com/ultralytics/yolov5/wiki/Train-Custom-Data). 
+
+Add `dataset.yaml` in your kumc folder according to
+[this documentation](https://github.com/ultralytics/yolov5/wiki/Train-Custom-Data).
 
 It would be something like this:
+
 ```
 path: path/to/kumc/folder
 train: train2019
@@ -12,13 +14,14 @@ nc: 2
 names: [hyperplastic, adenomatous]
 ```
 
-You can also convert KUMC to YOLO format using this commands. This is not needed for YOLOv5. 
+You can also convert KUMC to YOLO format using this commands. This is not needed for YOLOv5.
 
 ```bash
 pip install -r requirements.txt
 python kumc.py path/to/kumc/folder
 python voc_to_yolo.py path/to/kumc/folder 'adenomatous,hyperplastic'
 ```
+
 ## KUMC Dataset Semi-supervised
 
 Useful commands for this project
